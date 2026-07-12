@@ -1,0 +1,221 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             String                   @id
+  name           String
+  email          String                   @unique
+  password       String
+  role           String                   // 'admin' | 'employee' | 'manager'
+  department     String
+  avatar         String?
+  createdAt      DateTime                 @default(now())
+  xp             Int                      @default(0)
+  points         Int                      @default(0)
+  acknowledges   PolicyAcknowledgement[]
+}
+
+model Department {
+  id            String   @id
+  name          String
+  code          String
+  head          String
+  parentId      String?
+  employeeCount Int      @default(0)
+  status        String   @default("active")
+  envScore      Int      @default(0)
+  socialScore   Int      @default(0)
+  govScore      Int      @default(0)
+}
+
+model Category {
+  id     String @id
+  name   String
+  type   String // 'csr_activity' | 'challenge'
+  status String @default("active")
+}
+
+model EmissionFactor {
+  id       String @id
+  name     String
+  factor   Float
+  unit     String
+  category String
+  status   String @default("active")
+}
+
+model Product {
+  id              String @id
+  name            String
+  department      String
+  carbonFootprint Float
+  energyRating    String
+  recyclability   Int
+  status          String @default("active")
+}
+
+model Goal {
+  id         String   @id
+  title      String
+  department String
+  target     Float
+  current    Float
+  unit       String
+  deadline   String
+  status     String   @default("on_track") // 'on_track' | 'at_risk' | 'achieved'
+}
+
+model CarbonTransaction {
+  id          String   @id
+  date        String
+  department  String
+  source      String
+  emissions   Float
+  unit        String   @default("tCO2e")
+  description String
+}
+
+model CSRActivity {
+  id               String                 @id
+  title            String
+  categoryId       String
+  date             String
+  location         String
+  description      String
+  status           String                 @default("planned") // 'planned' | 'active' | 'completed'
+  participantCount Int                    @default(0)
+  participations   EmployeeParticipation[]
+}
+
+model EmployeeParticipation {
+  id             String      @id
+  employeeName   String
+  activityId     String
+  proofAttached  Boolean     @default(false)
+  approvalStatus String      @default("pending") // 'pending' | 'approved' | 'rejected'
+  pointsEarned   Int         @default(0)
+  completionDate String?
+  activity       CSRActivity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+}
+
+model Policy {
+  id                  String                  @id
+  name                String
+  category            String
+  version             String
+  status              String                  @default("active") // 'active' | 'draft'
+  acknowledgementCount Int                    @default(0)
+  totalEmployees      Int                     @default(0)
+  acknowledges        PolicyAcknowledgement[]
+}
+
+model PolicyAcknowledgement {
+  id       String @id
+  userId   String
+  policyId String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  policy   Policy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, policyId])
+}
+
+model Audit {
+  id            String            @id
+  title         String
+  department    String
+  auditor       String
+  scheduledDate String
+  status        String            @default("planned") // 'planned' | 'in_progress' | 'completed'
+  issues        ComplianceIssue[]
+}
+
+model ComplianceIssue {
+  id          String @id
+  auditId     String
+  severity    String // 'low' | 'medium' | 'high' | 'critical'
+  description String
+  owner       String
+  dueDate     String
+  status      String @default("open") // 'open' | 'in_progress' | 'resolved'
+  audit       Audit  @relation(fields: [auditId], references: [id], onDelete: Cascade)
+}
+
+model Challenge {
+  id               String                   @id
+  title            String
+  categoryId       String
+  description      String
+  xp               Int
+  difficulty       String                   // 'easy' | 'medium' | 'hard'
+  evidenceRequired Boolean                  @default(false)
+  deadline         String
+  status           String                   @default("active") // 'active' | 'draft' | 'under_review'
+  participations   ChallengeParticipation[]
+}
+
+model ChallengeParticipation {
+  id             String    @id
+  challengeId    String
+  employeeName   String
+  progress       Int       @default(0)
+  proofSubmitted Boolean   @default(false)
+  approvalStatus String    @default("pending") // 'pending' | 'approved' | 'rejected'
+  xpAwarded      Int       @default(0)
+  challenge      Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+}
+
+model Badge {
+  id          String @id
+  name        String
+  description String
+  unlockRule  String
+  icon        String
+  earnedCount Int    @default(0)
+}
+
+model Reward {
+  id             String @id
+  name           String
+  description    String
+  pointsRequired Int
+  stock          Int    @default(0)
+  status         String @default("active")
+}
+
+model Employee {
+  id                  String @id
+  name                String
+  department          String
+  xp                  Int    @default(0)
+  points              Int    @default(0)
+  badgesEarned        Int    @default(0)
+  challengesCompleted Int    @default(0)
+}
+
+model Notification {
+  id        String   @id
+  type      String   // 'compliance' | 'approval' | 'system'
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model GlobalConfig {
+  id                     String  @id @default("main")
+  autoEmissionCalc       Boolean @default(true)
+  evidenceRequired       Boolean @default(true)
+  badgeAutoAward         Boolean @default(true)
+  envWeight              Int     @default(40)
+  socialWeight           Int     @default(30)
+  govWeight              Int     @default(30)
+  notifyComplianceIssue  Boolean @default(true)
+  notifyApprovalDecision Boolean @default(true)
+  notifyPolicyReminder   Boolean @default(true)
+  notifyBadgeUnlock      Boolean @default(false)
+}

@@ -40,7 +40,11 @@ export function Header() {
     <header className="h-16 border-b border-border bg-background flex items-center justify-between px-6 sticky top-0 z-10">
       <div className="flex items-center gap-4">
         <div className="md:hidden">
-          <Button variant="ghost" size="icon">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={() => window.dispatchEvent(new Event("esg_sidebar_toggle"))}
+          >
             <Menu className="w-5 h-5" />
           </Button>
         </div>

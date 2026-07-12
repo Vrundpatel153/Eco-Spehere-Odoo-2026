@@ -323,7 +323,6 @@ export default function Gamification() {
             </CardContent>
           </Card>
         </TabsContent>
-      </Tabs>
 
       {/* Join Dialog */}
       <Dialog open={joinModal} onOpenChange={setJoinModal}>
@@ -438,6 +437,7 @@ export default function Gamification() {
           </Card>
         </TabsContent>
       )}
+      </Tabs>
     </Layout>
   );
 }

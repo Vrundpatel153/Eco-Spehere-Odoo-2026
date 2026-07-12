@@ -112,5 +112,37 @@ We are a team of 4 dedicated developers competing to build state-of-the-art ESG 
 
 5. Run Development Servers:
    From the root folder, run:
-   * Backend: `pnpm --filter @workspace/api dev`
-   * Frontend: `pnpm dev`
+   * Backend API: `pnpm --filter @workspace/api dev`
+   * Frontend Web App: `pnpm dev`
+
+### 🧪 Automated Integration Tests
+You can run the full backend CLI-based integration test suite covering auth, session validation, redis stats, and database transaction consistency:
+```bash
+pnpm test:api
+```
+
+---
+
+## 📱 Mobile Responsiveness & Premium Scrolling
+* **Dynamic Sidebar Navigation**: Automatically responds to mobile and tablet viewports by transitioning to an overlay drawer triggered by a navigation menu.
+* **Responsive Grid System**: Grid layouts dynamically adjust across `sm`, `md`, `lg`, and `xl` breakpoints to guarantee pixel-perfect chart and table visibility on all devices.
+* **Glassmorphic Custom Scrollbars**: Integrated custom browser scrollbar rules configured with HSL variables, matching the platform's clean dark glassmorphism layout theme without standard browser scrollbar clutter.
+
+---
+
+## 🖼️ Platform Media Showcase
+
+### 📊 Main ESG Dashboard
+![Main Dashboard](media/dashboard.png)
+
+### 🌲 Environmental Module (Carbon Calculator & Goals)
+![Environmental Module](media/environmental.png)
+
+### 🤝 Social Module (CSR Hub & Diversity Charting)
+![Social Module](media/social.png)
+
+### ⚖️ Governance Module (Compliance Audits & Issues)
+![Governance Module](media/governance.png)
+
+### 🎮 Gamification & Rewards Module
+![Gamification Module](media/gamification.png)

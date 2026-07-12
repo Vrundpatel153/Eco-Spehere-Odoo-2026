@@ -6,7 +6,8 @@
     "preinstall": "sh -c 'rm -f package-lock.json yarn.lock; case \"$npm_config_user_agent\" in pnpm/*) ;; *) echo \"Use pnpm instead\" >&2; exit 1 ;; esac'",
     "dev": "pnpm --filter @workspace/ecosphere dev",
     "build": "pnpm --filter @workspace/ecosphere build",
-    "typecheck": "pnpm --filter @workspace/ecosphere typecheck"
+    "typecheck": "pnpm --filter @workspace/ecosphere typecheck",
+    "test:api": "pnpm --filter @workspace/api test"
   },
   "private": true,
   "devDependencies": {
